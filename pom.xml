@@ -8,8 +8,23 @@
 
   <groupId>org.jenkins-ci.plugins</groupId>
   <artifactId>composer-security-checker</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0</version>
   <packaging>hpi</packaging>
+
+  <licenses>
+      <license>
+          <name>The MIT license</name>
+          <comments>All source code is under the MIT license.</comments>
+      </license>
+  </licenses>
+
+  <developers>
+      <developer>
+          <id>easylo</id>
+          <name>Laurent RICHARD</name>
+          <email>easylo+jenkins@gmail.com</email>
+      </developer>
+  </developers>
 
   <!-- get every artifact through repo.jenkins-ci.org, which proxies all the artifacts that we need -->
   <repositories>
