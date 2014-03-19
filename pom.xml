@@ -10,6 +10,10 @@
   <artifactId>composer-security-checker</artifactId>
   <version>1.1-SNAPSHOT</version>
   <packaging>hpi</packaging>
+  <name>Jenkins composer security checker plugin</name>
+  <description>Utility plugin for Git support in Jenkins</description>
+  <url>http://wiki.jenkins-ci.org/display/JENKINS/Composer+Security+Checker+Plugin</url>
+
 
   <licenses>
       <license>
@@ -17,6 +21,11 @@
           <comments>All source code is under the MIT license.</comments>
       </license>
   </licenses>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+  </properties>
 
   <developers>
       <developer>
@@ -42,12 +51,11 @@
   </pluginRepositories>
 
   <scm>
-    <connection>scm:git:https://github.com/jenkinsci/composer-security-checker-plugin.git</connection>
-    <developerConnection>scm:git:https://github.com/jenkinsci/composer-security-checker-plugin.git</developerConnection>
-    <url>https://github.com/jenkinsci/composer-security-checker-plugin</url>
+    <connection>scm:git:git://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
+    <developerConnection>scm:git:git@github.com:jenkinsci/${project.artifactId}-plugin.git</developerConnection>
+    <url>http://github.com/jenkinsci/${project.artifactId}-plugin</url>
+    <tag>HEAD</tag>
   </scm>
-
-  <url>http://wiki.jenkins-ci.org/display/JENKINS/Composer+Security+Checker+Plugin</url>
 
   <distributionManagement>
     <repository>
