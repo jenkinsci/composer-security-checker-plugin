@@ -13,10 +13,4 @@
     <f:textbox />
   </f:entry>
    -->
-  <f:entry name="apimode" title="Choose Mode" field="apimode">
-    <select name="apimode">
-        <option value="LOCAL">Local</option>
-        <option value="API">Api</option>
-    </select>
-  </f:entry>
 </j:jelly>

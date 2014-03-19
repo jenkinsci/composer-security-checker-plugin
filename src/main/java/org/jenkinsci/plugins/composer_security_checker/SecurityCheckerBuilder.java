@@ -45,27 +45,12 @@ import org.apache.commons.httpclient.methods.multipart.Part;
  */
 public class SecurityCheckerBuilder extends Builder {
 
-    private final String name;
-    private final String apimode;
-    //private final String name;
     private final String apiUrl = "https://security.sensiolabs.org/check_lock";
 
     // Fields in config.jelly must match the parameter names in the "DataBoundConstructor"
     @DataBoundConstructor
-    public SecurityCheckerBuilder(String apimode) {
-        this.name = "test";
-        this.apimode = apimode; // "API"; //"LOCAL"
-    }
-
-    /**
-     * We'll use this from the <tt>config.jelly</tt>.
-     */
-    //public String getName() {
-    //    return name;
-    //}
+    public SecurityCheckerBuilder() {
     
-    public String getApimode() {
-        return apimode;
     }
 
     @Override
@@ -168,10 +153,10 @@ public class SecurityCheckerBuilder extends Builder {
          */
         public FormValidation doCheckName(@QueryParameter String value)
                 throws IOException, ServletException {
-            if (value.length() == 0)
-                return FormValidation.error("Please set a name");
-            if (value.length() < 4)
-                return FormValidation.warning("Isn't the name too short?");
+            //if (value.length() == 0)
+            //    return FormValidation.error("Please set a name");
+            //if (value.length() < 4)
+            //    return FormValidation.warning("Isn't the name too short?");
             return FormValidation.ok();
         }
 
@@ -191,22 +176,13 @@ public class SecurityCheckerBuilder extends Builder {
         public boolean configure(StaplerRequest req, JSONObject formData) throws FormException {
             // To persist global configuration information,
             // set that to properties and call save().
-            useFrench = formData.getBoolean("useFrench");
+            //useFrench = formData.getBoolean("useFrench");
             // ^Can also use req.bindJSON(this, formData);
             //  (easier when there are many fields; need set* methods for this, like setUseFrench)
             save();
             return super.configure(req,formData);
         }
 
-        /**
-         * This method returns true if the global configuration says we should speak French.
-         *
-         * The method name is bit awkward because global.jelly calls this method to determine
-         * the initial state of the checkbox by the naming convention.
-         */
-        public boolean getUseFrench() {
-            return useFrench;
-        }
     }
 }
 
