@@ -1,4 +1,4 @@
-package org.jenkinsci.plugins.composer_security_checker;
+package org.jenkinsci.plugins.composer_security_checker_plugin;
 import hudson.Launcher;
 import hudson.Extension;
 import hudson.util.FormValidation;

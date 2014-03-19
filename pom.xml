@@ -3,12 +3,12 @@
   <parent>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>plugin</artifactId>
-    <version>1.509.4</version><!-- which version of Jenkins is this plugin built against? -->
+    <version>1.555</version><!-- which version of Jenkins is this plugin built against? -->
   </parent>
 
   <groupId>org.jenkins-ci.plugins</groupId>
-  <artifactId>composer-security-checker</artifactId>
-  <version>1.1-SNAPSHOT</version>
+  <artifactId>composer-security-checker-plugin</artifactId>
+  <version>1.3-SNAPSHOT</version>
   <packaging>hpi</packaging>
 
   <licenses>
@@ -22,7 +22,7 @@
       <developer>
           <id>easylo</id>
           <name>Laurent RICHARD</name>
-          <email>easylo+jenkins@gmail.com</email>
+          <email>easylo@gmail.com</email>
       </developer>
   </developers>
 
@@ -42,8 +42,8 @@
   </pluginRepositories>
 
   <scm>
-    <connection>scm:git:ssh://github.com/jenkinsci/composer-security-checker-plugin.git</connection>
-    <developerConnection>scm:git:ssh://git@github.com/jenkinsci/composer-security-checker-plugin.git</developerConnection>
+    <connection>scm:git:https://github.com/jenkinsci/composer-security-checker-plugin.git</connection>
+    <developerConnection>scm:git:https://github.com/jenkinsci/composer-security-checker-plugin.git</developerConnection>
     <url>https://github.com/jenkinsci/composer-security-checker-plugin</url>
   </scm>
 
