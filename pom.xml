@@ -41,4 +41,20 @@
     </pluginRepository>
   </pluginRepositories>
 
+  <scm>
+    <connection>scm:git:ssh://github.com/jenkinsci/composer-security-checker-plugin.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/jenkinsci/composer-security-checker-plugin.git</developerConnection>
+    <url>https://github.com/jenkinsci/composer-security-checker-plugin</url>
+  </scm>
+
+  <url>http://wiki.jenkins-ci.org/display/JENKINS/Composer+Security+Checker+Plugin</url>
+
+  <distributionManagement>
+    <repository>
+      <id>maven.jenkins-ci.org</id>
+      <url>http://maven.jenkins-ci.org:8081/content/repositories/releases/</url>
+    </repository>
+  </distributionManagement>
+
+
 </project>
