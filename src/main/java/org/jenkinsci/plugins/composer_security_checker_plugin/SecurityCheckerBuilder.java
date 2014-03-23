@@ -9,6 +9,9 @@ import hudson.tasks.Builder;
 import hudson.tasks.BuildStepDescriptor;
 import net.sf.json.JSONObject;
 
+import hudson.util.Scrambler;
+import hudson.util.XStream2;
+
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.QueryParameter;
@@ -18,6 +21,16 @@ import javax.servlet.ServletException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.Serializable;
+import java.net.Authenticator;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.URL;
+import java.net.URLConnection;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.regex.Pattern;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
@@ -25,6 +38,12 @@ import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.multipart.FilePart;
 import org.apache.commons.httpclient.methods.multipart.MultipartRequestEntity;
 import org.apache.commons.httpclient.methods.multipart.Part;
+import org.apache.commons.httpclient.ProxyHost;
+import org.apache.commons.httpclient.Credentials;
+import org.apache.commons.httpclient.HostConfiguration;
+import org.apache.commons.httpclient.UsernamePasswordCredentials;
+import org.apache.commons.httpclient.auth.AuthScope;
+
 
 /**
  * Sample {@link Builder}.
@@ -47,11 +66,68 @@ public class SecurityCheckerBuilder extends Builder {
 
     private final String apiUrl = "https://security.sensiolabs.org/check_lock";
 
+    // proxy
+    private String server ;
+    private int port ;
+    private String userName ;
+    private String userPassword ;
+
+    public String getUserName() {
+        return userName;
+    }
+    public String getUserPassword() {
+        return userPassword;
+    }
+    public int getPort() {
+        return port;
+    }
+    public String getServer() {
+        return server;
+    }
+
     // Fields in config.jelly must match the parameter names in the "DataBoundConstructor"
     @DataBoundConstructor
-    public SecurityCheckerBuilder() {
-    
+    public SecurityCheckerBuilder()
+    {
+
     }
+
+    private HttpClient getHttpClient() {
+
+        this.server = getDescriptor().getProxyServer();
+        this.port = getDescriptor().getProxyPort() ;
+        this.userName = getDescriptor().getProxyUserName();
+        this.userPassword = getDescriptor().getProxyUserPassword();
+
+        HttpClient client = new HttpClient();
+
+        
+        // test si besoin proxy
+
+        if( this.server != null && !this.server.isEmpty() ){
+
+            HostConfiguration config = client.getHostConfiguration();
+            config.setProxy( this.server, this.port );
+
+            if( this.userName != null && !this.userName.isEmpty() && this.userPassword != null && !this.userPassword.isEmpty() ){
+                
+                Credentials credentials = new UsernamePasswordCredentials(this.userName, this.userPassword);
+                AuthScope authScope = new AuthScope( this.server, this.port );
+
+                client.getState().setProxyCredentials(authScope, credentials);
+            }
+        }
+        //client.getHostConfiguration().setProxyHost(new ProxyHost(this.server, this.port));
+            
+
+
+        return client;
+
+    }
+
+    //public static Proxy createProxy( String name, int port) {
+    //    return new Proxy(Proxy.Type.HTTP, new InetSocketAddress(name,port));
+    //}
 
     @Override
     public boolean perform(AbstractBuild build, Launcher launcher, BuildListener listener)throws FileNotFoundException {
@@ -60,6 +136,7 @@ public class SecurityCheckerBuilder extends Builder {
     	listener.getLogger().println("Composer Security Check : \n" );
     			
     	String resultUUid=null;
+        
         
     	
         PostMethod postMethod = new PostMethod(this.apiUrl);
@@ -79,9 +156,12 @@ public class SecurityCheckerBuilder extends Builder {
         Part[] parts = {new FilePart("lock", fileComposerLock)};
         postMethod.setRequestEntity(new MultipartRequestEntity(parts, postMethod.getParams()));
 
-        HttpClient client = new HttpClient();
-
+        //HttpClient client = new HttpClient();
+        
         try {
+
+            HttpClient client = getHttpClient();
+
             int status = client.executeMethod(postMethod);
             listener.getLogger().printf("composer file: %s%n", composerLockFileFullPath);
             //listener.getLogger().printf("Response code: %d%n", status);
@@ -108,6 +188,7 @@ public class SecurityCheckerBuilder extends Builder {
           //return true; 
     }
 
+
     // Overridden for better type safety.
     // If your plugin doesn't really define any property on Descriptor,
     // you don't have to do this.
@@ -133,7 +214,12 @@ public class SecurityCheckerBuilder extends Builder {
          * <p>
          * If you don't want fields to be persisted, use <tt>transient</tt>.
          */
-        private boolean useFrench;
+        //private boolean useFrench;
+        // proxy
+        private  String server ;
+        private  int port ;
+        private  String userName ;
+        private  String userPassword ;
 
         /**
          * In order to load the persisted global configuration, you have to 
@@ -151,12 +237,30 @@ public class SecurityCheckerBuilder extends Builder {
          * @return
          *      Indicates the outcome of the validation. This is sent to the browser.
          */
-        public FormValidation doCheckName(@QueryParameter String value)
+        /*public FormValidation doCheckName(@QueryParameter String value)
                 throws IOException, ServletException {
             //if (value.length() == 0)
             //    return FormValidation.error("Please set a name");
             //if (value.length() < 4)
             //    return FormValidation.warning("Isn't the name too short?");
+            return FormValidation.ok();
+        }*/
+
+        public FormValidation doCheckPort(@QueryParameter String value) {
+            //value = Util.fixEmptyAndTrim(value);
+            value = value;
+            if (value == null) {
+                return FormValidation.ok();
+            }
+            int port;
+            try {
+                port = Integer.parseInt(value);
+            } catch (NumberFormatException e) {
+                return FormValidation.error("Messages.PluginManager_PortNotANumber()");
+            }
+            if (port < 0 || port > 65535) {
+                return FormValidation.error("Messages.PluginManager_PortNotInRange(0, 65535)");
+            }
             return FormValidation.ok();
         }
 
@@ -172,16 +276,45 @@ public class SecurityCheckerBuilder extends Builder {
             return "Composer Security Checker";
         }
 
+        public String getProxyServer() {
+            return server;
+        }
+        public int getProxyPort() {
+            return port;
+        }
+        public String getProxyUserName() {
+            return userName;
+        }
+        public String getProxyUserPassword() {
+            return userPassword;
+        }
+
         @Override
         public boolean configure(StaplerRequest req, JSONObject formData) throws FormException {
             // To persist global configuration information,
             // set that to properties and call save().
-            //useFrench = formData.getBoolean("useFrench");
+            server = formData.getString("server");
+            port = formData.getInt("port");
+            userName = formData.getString("userName");
+            userPassword = formData.getString("userPassword");
             // ^Can also use req.bindJSON(this, formData);
             //  (easier when there are many fields; need set* methods for this, like setUseFrench)
             save();
             return super.configure(req,formData);
         }
+
+        /*private static final XStream XSTREAM = new XStream2();
+
+        public static XmlFile getXmlFile() {
+            return new XmlFile(XSTREAM, new File(Jenkins.getInstance().getRootDir(), "proxy.xml"));
+        }
+
+        public void save() throws IOException {
+            if(BulkChange.contains(this))   return;
+            XmlFile config = getXmlFile();
+            config.write(this);
+            SaveableListener.fireOnChange(this, config);
+        }*/
 
     }
 }
