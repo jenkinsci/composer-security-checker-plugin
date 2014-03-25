@@ -94,10 +94,10 @@ public class SecurityCheckerBuilder extends Builder {
 
     private HttpClient getHttpClient() {
 
-        this.server = getDescriptor().getProxyServer();
-        this.port = getDescriptor().getProxyPort() ;
-        this.userName = getDescriptor().getProxyUserName();
-        this.userPassword = getDescriptor().getProxyUserPassword();
+        this.server = getDescriptor().getServer();
+        this.port = getDescriptor().getPort() ;
+        this.userName = getDescriptor().getUserName();
+        this.userPassword = getDescriptor().getUserPassword();
 
         HttpClient client = new HttpClient();
 
@@ -276,16 +276,16 @@ public class SecurityCheckerBuilder extends Builder {
             return "Composer Security Checker";
         }
 
-        public String getProxyServer() {
+        public String getServer() {
             return server;
         }
-        public int getProxyPort() {
+        public int getPort() {
             return port;
         }
-        public String getProxyUserName() {
+        public String getUserName() {
             return userName;
         }
-        public String getProxyUserPassword() {
+        public String getUserPassword() {
             return userPassword;
         }
 
